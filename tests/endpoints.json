@@ -1,4 +1,10 @@
 {
+  "invalid-key": {
+    "GET": {
+      "body": "mocks/invalid/key.json",
+      "path": "/agendas?key=mypublickey"
+    }
+  },
   "agenda": {
     "GET": {
       "body": "mocks/agenda/agenda.json",
