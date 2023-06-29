@@ -1,0 +1,33 @@
+{
+    "base_uri": "https://api.openagenda.com/v2/",
+    "endpoints": {
+        "my_agendas": {
+            "method": "GET",
+            "path":  "me/agendas",
+            "headers": {
+                "accept": "application/json"
+            }
+        },
+        "agendas": {
+            "method": "GET",
+            "path":  "agendas/{agendaUid}",
+            "headers": {
+                "accept": "application/json"
+            }
+        },
+        "events": {
+            "method": "GET",
+            "path":  "agendas/{agendaUid}/events",
+            "headers": {
+                "accept": "application/json"
+            }
+        },
+        "event": {
+            "method": "GET",
+            "path":  "agendas/{agendaUid}/events/{eventUid}",
+            "headers": {
+                "accept": "application/json"
+            }
+        }
+    }
+}
