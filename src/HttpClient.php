@@ -76,8 +76,6 @@ class HttpClient
    * @param array|null $params
    *
    * @return string
-   *
-   * @throws OpenAgendaSdkException
    */
   public function request(string $endpoint, ?array $placeholders = [], ?array $params = []): string
   {
@@ -88,8 +86,8 @@ class HttpClient
     try {
       $request = new Request($endpointConfig->method, $path);
       $response = $this->client->send($request, ['headers' => (array)$endpointConfig->headers]);
-    } catch (\GuzzleHttp\Exception\GuzzleException $ex) {
-      throw new OpenAgendaSdkException($ex->getMessage());
+    } catch (\Throwable $ex) {
+      return \json_encode([]);
     }
 
     return $response->getBody();
