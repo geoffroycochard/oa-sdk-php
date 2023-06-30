@@ -76,6 +76,11 @@ class OpenAgendaSdk
   public function getMyAgendasUids(): array
   {
     $agendas = \json_decode($this->getMyAgendas(), false);
+    
+    if ($agendas->error) {
+      return [];
+    }
+    
     if (!\property_exists($agendas, 'items')) {
       return [];
     }

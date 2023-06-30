@@ -30,4 +30,14 @@ class AgendaTest extends TestCase
         $this->assertNotNull($agenda->uid);
         $this->assertIsInt($agenda->uid);
     }
+
+    /**
+     * @throws OpenAgendaSdkException
+     * @test
+     */
+    public function testGetMyAgendasUids() {
+        $data = HelperTest::getOa('invalid-key', 'GET')->getMyAgendasUids();
+        $this->assertIsArray($data);
+        $this->assertEmpty($data);
+    }
 }
