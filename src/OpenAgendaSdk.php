@@ -212,8 +212,12 @@ class OpenAgendaSdk
    */
   public function getEventRichSnippet(array $event, string $url = '', string $locale = 'en'): array {
     $schema = [];
-    $begin  = $event['timings'][0]['begin'];
-    $end    = $event['timings'][count($event['timings'])-1]['end'];
+
+    $firstTiming = ! empty( $event['timings'] ) ? $event['timings'][0] : $event['firstTiming'];
+    $lastTiming  = ! empty( $event['timings'] ) ? $event['timings'][count($event['timings'])-1] : $event['lastTiming'];
+
+    $begin  = $firstTiming['begin'] ?? '';
+    $end    = $lastTiming['end'] ?? '';
 
     $attendanceModeLabels = [
       1 => 'OfflineEventAttendanceMode',
@@ -269,14 +273,14 @@ class OpenAgendaSdk
       $place = [
         '@type'   => 'Place',
         'name'    => $event['location']['name'],
-        'address' => [
+        'address' => array_filter([
           '@type'          => 'PostalAddress',
-          'streetAddress'  => $event['location']['address'],
-          'addressLocality'=> $event['location']['city'],
-          'addressRegion'  => $event['location']['region'],
-          'postalCode'     => $event['location']['postalCode'],
-          'addressCountry' => $event['location']['countryCode'],
-        ],
+          'streetAddress'  => $event['location']['address'] ?? '',
+          'addressLocality'=> $event['location']['city']  ?? '',
+          'addressRegion'  => $event['location']['region']  ?? '',
+          'postalCode'     => $event['location']['postalCode'] ?? '',
+          'addressCountry' => $event['location']['countryCode'] ?? '',
+        ]),
         'geo'     => [
           '@type'     => 'GeoCoordinates',
           'latitude'  => $event['location']['latitude'],
