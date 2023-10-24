@@ -54,6 +54,25 @@ class OpenAgendaSdk
   /**
    * @return string
    *
+   * @link https://developers.openagenda.com/lister-ses-agendas/
+   */
+  public function getMyAgenda(int $agendaUid): string
+  {
+    try {
+      $content = $this->getClient()->request(Endpoints::MY_AGENDA, ['agendaUid' => $agendaUid]);
+    } catch (\Throwable $e) {
+      return \json_encode(['error' => $e->getMessage()]);
+    }
+
+    return $content;
+  }
+
+  /**
+   * @param int $agendaUid
+   *  The agenda UID.
+   *
+   * @return string
+   *
    * @link https://developers.openagenda.com/configuration-dun-agenda/
    */
   public function getMyAgendas(): string
@@ -102,9 +121,9 @@ class OpenAgendaSdk
    */
   public function hasPermission(int $agendaUid): bool
   {
-      $agendaUids = $this->getMyAgendasUids($agendaUid);
+    $agenda = \json_decode($this->getMyAgenda($agendaUid));
 
-      return \in_array($agendaUid, $agendaUids);
+    return isset($agenda->me->member);
   }
 
   /**

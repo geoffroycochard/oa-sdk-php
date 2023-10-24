@@ -1,6 +1,13 @@
 {
     "base_uri": "https://api.openagenda.com/v2/",
     "endpoints": {
+        "my_agenda": {
+            "method": "GET",
+            "path":  "me/agendas/{agendaUid}",
+            "headers": {
+                "accept": "application/json"
+            }
+        },
         "my_agendas": {
             "method": "GET",
             "path":  "me/agendas",
