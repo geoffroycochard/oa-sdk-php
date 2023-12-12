@@ -79,8 +79,8 @@ class HttpClient
    */
   public function request(string $endpoint, ?array $placeholders = [], ?array $params = []): string
   {
-    $params += ['key' => $this->publicKey];
     $endpointConfig = $this->config->endpoints->{$endpoint};
+    $endpointConfig->headers->key = $this->publicKey;
     $path = $this->makePath($endpointConfig, $placeholders, $params);
 
     try {
