@@ -232,8 +232,8 @@ class OpenAgendaSdk
   public function getEventRichSnippet(array $event, string $url = '', string $locale = 'en'): array {
     $schema = [];
 
-    $firstTiming = ! empty( $event['timings'] ) ? $event['timings'][0] : $event['firstTiming'];
-    $lastTiming  = ! empty( $event['timings'] ) ? $event['timings'][count($event['timings'])-1] : $event['lastTiming'];
+    $firstTiming = ! empty( $event['timings'] ) ? $event['timings'][0] : ($event['firstTiming'] ?? []);
+    $lastTiming  = ! empty( $event['timings'] ) ? $event['timings'][count($event['timings'])-1] : ($event['lastTiming'] ?? []);
 
     $begin  = $firstTiming['begin'] ?? '';
     $end    = $lastTiming['end'] ?? '';
