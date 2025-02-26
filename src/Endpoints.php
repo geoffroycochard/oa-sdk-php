@@ -38,4 +38,23 @@ final class Endpoints
      */
     public const LOCATIONS = 'locations';
 
+    /**
+     * requestAccessToken: Get the access token for the agenda.
+     */
+    public const REQUEST_ACCESS_TOKEN = 'requestAccessToken';
+
+    /**
+     * createEvent: Create a new event in the agenda.
+     */
+    public const CREATE_EVENT = 'createEvent';
+
+    /**
+     * updateEvent: Update an existing event in the agenda.
+     */
+    public const UPDATE_EVENT = 'updateEvent';
+
+    /**
+     * deleteEvent: Delete an existing event in the agenda.
+     */
+    public const DELETE_EVENT = 'deleteEvent';
 }

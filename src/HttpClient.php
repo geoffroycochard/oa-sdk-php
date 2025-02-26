@@ -93,6 +93,20 @@ class HttpClient
     return $response->getBody();
   }
 
+  public function post(string $endpoint, ?array $placeholders = [], ?array $params = [], ?array $headers = []): string
+  {
+    $endpointConfig = $this->config->endpoints->{$endpoint};
+    $endpointConfig->headers->key = $this->publicKey;
+    $path = $this->makePath($endpointConfig, $placeholders, $params);
+
+    try {
+      $response = $this->client->post($path, ['headers' => (array)$endpointConfig->headers + $headers]);
+      return $response->getBody();
+    } catch (\Throwable $ex) {
+      return \json_encode([]);
+    }
+  }
+
   /**
    * @param \stdClass $endpointConfig
    *   Endpoint config object.

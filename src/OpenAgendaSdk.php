@@ -26,19 +26,32 @@ class OpenAgendaSdk
   private $clientOptions;
 
   /**
+   * @var string|null
+   */
+  private ?string $accessToken = null;
+
+  /**
+   * @var string|null
+   */
+  private ?string $secretKey = null;
+
+  /**
    * OpenAgendaSdk constructor.
    *
    * @param string|null $publicKey
    *   Public key.
    * @param array|null $clientOptions
    *   Array of client options.
+   * @param string|null $secretKey
+   *   Secret key.
    *
    * @see \OpenAgendaSdk\RequestOptions for a list of available client options.
    */
-  public function __construct(?string $publicKey, ?array $clientOptions = [])
+  public function __construct(?string $publicKey, ?array $clientOptions = [], ?string $secretKey = null)
   {
     $this->publicKey = $publicKey;
     $this->clientOptions = $clientOptions;
+    $this->secretKey = $secretKey;
   }
 
   /**
@@ -377,8 +390,93 @@ class OpenAgendaSdk
 
     return $content;
   }
-  
-  
 
+  private function getAccessToken(): string
+  {
+    if ($this->accessToken === null && $this->secretKey !== null) {
+      try {
+        $response = $this->getClient()->post(Endpoints::REQUEST_ACCESS_TOKEN, [
+          'grant_type' => 'authorization_code',
+          'code' => $this->secretKey
+        ]);
+        $data = \json_decode($response, true);
+        $this->accessToken = $data['access_token'];
+      } catch (\Throwable $e) {
+        throw new \RuntimeException('Unable to get access token: ' . $e->getMessage());
+      }
+    }
+    return $this->accessToken;
+  }
 
+  /**
+   * Create a new event in the agenda
+   * 
+   * @param int $agendaUid The agenda UID
+   * @param array $eventData The event data
+   * @return string Response body as json
+   */
+  public function createEvent(int $agendaUid, array $eventData): string
+  {
+    try {
+      $content = $this->getClient()->post(
+        Endpoints::EVENTS, 
+        ['agendaUid' => $agendaUid],
+        $eventData,
+        ['access-token' => $this->getAccessToken()]
+      );
+    } catch (\Throwable $e) {
+      return \json_encode(['error' => $e->getMessage()]);
+    }
+
+    return $content;
+  }
+
+  /**
+   * Update an existing event
+   * 
+   * @param int $agendaUid The agenda UID
+   * @param int $eventUid The event UID
+   * @param array $eventData The event data
+   * @return string Response body as json
+   */
+  public function updateEvent(int $agendaUid, int $eventUid, array $eventData): string
+  {
+    try {
+      $content = $this->getClient()->request(
+        Endpoints::EVENT,
+        ['agendaUid' => $agendaUid, 'eventUid' => $eventUid],
+        $eventData,
+        'PATCH',
+        ['access-token' => $this->getAccessToken()]
+      );
+    } catch (\Throwable $e) {
+      return \json_encode(['error' => $e->getMessage()]);
+    }
+
+    return $content;
+  }
+
+  /**
+   * Delete an event
+   * 
+   * @param int $agendaUid The agenda UID
+   * @param int $eventUid The event UID
+   * @return string Response body as json
+   */
+  public function deleteEvent(int $agendaUid, int $eventUid): string
+  {
+    try {
+      $content = $this->getClient()->request(
+        Endpoints::EVENT,
+        ['agendaUid' => $agendaUid, 'eventUid' => $eventUid],
+        [],
+        'DELETE',
+        ['access-token' => $this->getAccessToken()]
+      );
+    } catch (\Throwable $e) {
+      return \json_encode(['error' => $e->getMessage()]);
+    }
+
+    return $content;
+  }
 }

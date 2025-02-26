@@ -42,6 +42,34 @@
             "headers": {
                 "accept": "application/json"
             }
+        },
+        "requestAccessToken": {
+            "method": "POST",
+            "path":  "requestAccessToken",
+            "headers": {
+                "accept": "application/json"
+            }
+        },
+        "createEvent": {
+            "method": "POST",
+            "path":  "agendas/{agendaUid}/events",
+            "headers": {
+                "accept": "application/json"
+            }
+        },
+        "updateEvent": {
+            "method": "PUT",
+            "path":  "agendas/{agendaUid}/events/{eventUid}",
+            "headers": {
+                "accept": "application/json"
+            }
+        },
+        "deleteEvent": {
+            "method": "DELETE",
+            "path":  "agendas/{agendaUid}/events/{eventUid}",
+            "headers": {
+                "accept": "application/json"
+            }
         }
     }
 }
