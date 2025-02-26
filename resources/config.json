@@ -35,6 +35,13 @@
             "headers": {
                 "accept": "application/json"
             }
+        },
+        "locations": {
+            "method": "GET",
+            "path":  "agendas/{agendaUid}/locations",
+            "headers": {
+                "accept": "application/json"
+            }
         }
     }
 }

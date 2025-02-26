@@ -33,4 +33,9 @@ final class Endpoints
      */
     public const EVENT = 'event';
 
+    /**
+     * locations: Get the list of an agenda locations.
+     */
+    public const LOCATIONS = 'locations';
+
 }

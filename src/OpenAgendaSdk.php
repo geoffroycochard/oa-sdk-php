@@ -162,7 +162,7 @@ class OpenAgendaSdk
 
     $agenda = \json_decode($this->getAgenda($agendaUid));
 
-    if ($agenda->error) {
+    if (isset($agenda->error)) {
       return [];
     }
     $result = [];
@@ -358,4 +358,27 @@ class OpenAgendaSdk
     }
     return $value;
   }
+
+  /**
+   * @param int $agendaUid
+   *   The agenda UID.
+   * @param array $params
+   *   The parameters.
+   * 
+   * @return string
+   */
+  public function getLocations(int $agendaUid, array $params = []): string
+  {
+    try {
+      $content = $this->getClient()->request(Endpoints::LOCATIONS, ['agendaUid' => $agendaUid], $params);
+    } catch (\Throwable $e) {
+      return \json_encode(['error' => $e->getMessage()]);
+    }
+
+    return $content;
+  }
+  
+  
+
+
 }
