@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 
@@ -77,34 +78,20 @@ class HttpClient
    *
    * @return string
    */
-  public function request(string $endpoint, ?array $placeholders = [], ?array $params = []): string
+  public function request(string $endpoint, ?array $placeholders = [], ?array $params = [], array $headers = [], $body = null): string
   {
     $endpointConfig = $this->config->endpoints->{$endpoint};
     $endpointConfig->headers->key = $this->publicKey;
     $path = $this->makePath($endpointConfig, $placeholders, $params);
-
     try {
-      $request = new Request($endpointConfig->method, $path);
+      $request = new Request($endpointConfig->method, $path, $headers, $body);
       $response = $this->client->send($request, ['headers' => (array)$endpointConfig->headers]);
     } catch (\Throwable $ex) {
+      dd($ex->getResponse()->getBody()->getContents());
       return \json_encode([]);
     }
 
     return $response->getBody();
-  }
-
-  public function post(string $endpoint, ?array $placeholders = [], ?array $params = [], ?array $headers = []): string
-  {
-    $endpointConfig = $this->config->endpoints->{$endpoint};
-    $endpointConfig->headers->key = $this->publicKey;
-    $path = $this->makePath($endpointConfig, $placeholders, $params);
-
-    try {
-      $response = $this->client->post($path, ['headers' => (array)$endpointConfig->headers + $headers]);
-      return $response->getBody();
-    } catch (\Throwable $ex) {
-      return \json_encode([]);
-    }
   }
 
   /**

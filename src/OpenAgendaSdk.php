@@ -2,6 +2,8 @@
 
 namespace OpenAgendaSdk;
 
+use GuzzleHttp\Psr7\MultipartStream;
+
 /**
  * Class OpenAgendaSdk
  * @package OpenAgendaSdk
@@ -395,10 +397,24 @@ class OpenAgendaSdk
   {
     if ($this->accessToken === null && $this->secretKey !== null) {
       try {
-        $response = $this->getClient()->post(Endpoints::REQUEST_ACCESS_TOKEN, [
-          'grant_type' => 'authorization_code',
-          'code' => $this->secretKey
-        ]);
+        $response = $this->getClient()->request(
+          Endpoints::REQUEST_ACCESS_TOKEN, 
+          [],
+          [],
+          [], 
+          new MultipartStream(
+            [
+              [
+                'name' => 'grant_type',
+                'contents' => 'authorization_code'
+              ],
+              [
+                'name' => 'code',
+                'contents' => $this->secretKey
+              ]
+            ]
+          ),
+        );
         $data = \json_decode($response, true);
         $this->accessToken = $data['access_token'];
       } catch (\Throwable $e) {
@@ -418,11 +434,21 @@ class OpenAgendaSdk
   public function createEvent(int $agendaUid, array $eventData): string
   {
     try {
-      $content = $this->getClient()->post(
-        Endpoints::EVENTS, 
+      $content = $this->getClient()->request(
+        Endpoints::CREATE_EVENT, 
         ['agendaUid' => $agendaUid],
-        $eventData,
-        ['access-token' => $this->getAccessToken()]
+       [],
+       [
+        'access-token' => $this->getAccessToken()
+       ], 
+       new MultipartStream(
+         [
+           [
+             'name' => 'data',
+             'contents' => json_encode($eventData)
+           ]
+         ]
+       ),
       );
     } catch (\Throwable $e) {
       return \json_encode(['error' => $e->getMessage()]);
@@ -446,7 +472,6 @@ class OpenAgendaSdk
         Endpoints::EVENT,
         ['agendaUid' => $agendaUid, 'eventUid' => $eventUid],
         $eventData,
-        'PATCH',
         ['access-token' => $this->getAccessToken()]
       );
     } catch (\Throwable $e) {
@@ -470,7 +495,6 @@ class OpenAgendaSdk
         Endpoints::EVENT,
         ['agendaUid' => $agendaUid, 'eventUid' => $eventUid],
         [],
-        'DELETE',
         ['access-token' => $this->getAccessToken()]
       );
     } catch (\Throwable $e) {
